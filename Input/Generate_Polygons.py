@@ -28,6 +28,18 @@ poly2 = [[
 w.poly(poly2)
 w.record("Square2")
 
+# --- Polygon 3 ---
+poly3 = [[
+    [20, 20],
+    [25, 20],
+    [25, 25],
+    [20, 25],
+    [20, 21],
+    [20, 20]
+]]
+w.poly(poly3)
+w.record("Square3")
+
 # Save shapefile (creates .shp, .shx, .dbf)
 w.close()
 

@@ -4,7 +4,7 @@
 #include <Logging.h>
 
 Shapefile::~Shapefile() {
-    for (IShape* shape : shapes) {
+    for (IShape* shape : m_shapes) {
         delete shape;
     }
 }
@@ -22,50 +22,79 @@ void Shapefile::CreateAllShapes()
     uint32_t  fileLength = GetFileLength();
     m_shp.seekg(100, std::ios::beg); // Move to the end of the header
 
-    while(1)
+    switch (m_shapeType)
     {
-        IShape* t_shape = nullptr;
-        switch (m_shapeType)
+    case ShapeType::NULL_SHAPE:
+        LOG("Null shape encountered.");
+        break;
+    case ShapeType::POINT :
+        while(1)
         {
-        case ShapeType::NULL_SHAPE:
-            LOG("Null shape encountered.");
-            break;
-        case ShapeType::POINT :
-        {
+            IShape* t_shape = nullptr;
             m_shp.seekg(12, std::ios::cur); // Skip record number
-            uint32_t contentLength = 16; // 2 doubles = 16 bytes
             
             double x = 0.0;
             m_shp.read(reinterpret_cast<char*>(&x), sizeof(x));
             
             double y = 0.0;
             m_shp.read(reinterpret_cast<char*>(&y), sizeof(y));
-
             t_shape = new PointShape(x,y);
-            shapes.push_back(t_shape);
- 
-            break;
-        }
-        case ShapeType::POLYLINE :
-            //t_shape = new PolylineShape(m_shp, count);
-            //shapes.push_back(t_shape);
-            //count++;
-            break;
-        case ShapeType::POLYGON :
-            //t_shape = new PolygonShape(m_shp, count);
-            //shapes.push_back(t_shape);
-            //count++;
-            break;
-        default:
-            LOG("ShapeType invalid.");
-            break;
-        }
 
-        
+            m_shapes.push_back(t_shape);
+            if (m_shp.tellg() >= static_cast<std::streampos>(fileLength)) {
+                break;
+            } 
+        }
+        break;
+
+    case ShapeType::POLYGON :
+        while(1)
+        {
+            IShape* t_shape = nullptr;
+            m_shp.seekg(12, std::ios::cur); // Skip record header and 4 bytes of shape type
+            
+            double xmin = 0.0; m_shp.read(reinterpret_cast<char*>(&xmin), sizeof(xmin));
+            double ymin = 0.0; m_shp.read(reinterpret_cast<char*>(&ymin), sizeof(ymin));
+            double xmax = 0.0; m_shp.read(reinterpret_cast<char*>(&xmax), sizeof(xmax));
+            double ymax = 0.0; m_shp.read(reinterpret_cast<char*>(&ymax), sizeof(ymax));
+            
+            uint32_t NumParts = 0; m_shp.read(reinterpret_cast<char*>(&NumParts), sizeof(NumParts));
+            uint32_t NumPoints = 0; m_shp.read(reinterpret_cast<char*>(&NumPoints), sizeof(NumPoints));
+
+            std::vector<uint32_t> parts(NumParts);
+            for (uint32_t i = 0; i < NumParts; ++i) {
+                m_shp.read(reinterpret_cast<char*>(&parts[i]), sizeof(uint32_t));
+            }
+            
+            std::vector<std::pair<double, double>> points(NumPoints);
+            for (uint32_t i = 0; i < NumPoints; ++i) {
+                double x = 0.0; m_shp.read(reinterpret_cast<char*>(&x), sizeof(x));
+                double y = 0.0; m_shp.read(reinterpret_cast<char*>(&y), sizeof(y));
+                points[i] = std::make_pair(x, y);
+            }
+
+            t_shape = new PolygonShape(xmin, ymin, xmax, ymax,
+                                       NumParts, NumPoints,
+                                       points, parts);
+            
+            m_shapes.push_back(t_shape);
+            if (m_shp.tellg() >= static_cast<std::streampos>(fileLength)) {
+                break;
+            } 
+        }
+        break;
+    case ShapeType::POLYLINE :
+        //t_shape = new PolygonShape(m_shp, count);
+        //m_shapes.push_back(t_shape);
+        //count++;
+        break;
+    default:
+        LOG("ShapeType invalid.");
+        break;
     }
 }
 
-uint32_t  Shapefile::GetFileLength(){
+uint32_t Shapefile::GetFileLength(){
     if (!m_shp.is_open()) {
         std::cerr << "Failed to open shapefile: " << std::endl;
         return 0;
@@ -89,9 +118,22 @@ void Shapefile::LoadShapefiles(const std::string& filename) {
     }else {
         std::cout << "Loading shapefile: " << shp_filename << std::endl;
     }
+
     m_shp.open(shp_filename, std::ios::binary);
     if (!m_shp.is_open()) {
         std::cerr << "Failed to open shapefile: " << shp_filename << std::endl;
+        return;
+    }
+
+    m_shx.open(shx_filename, std::ios::binary);
+    if (!m_shx.is_open()) {
+        std::cerr << "Failed to open shapefile: " << shx_filename << std::endl;
+        return;
+    }
+
+    m_dbf.open(dbf_filename, std::ios::binary);
+    if (!m_dbf.is_open()) {
+        std::cerr << "Failed to open shapefile: " << dbf_filename << std::endl;
         return;
     }
 }
@@ -112,6 +154,6 @@ ShapeType Shapefile::GetShapeTypefromFile()
 }
 
 std::vector<IShape*> Shapefile::GetAllShapes() {
-    std::cout << "Getting shapes from loaded shapefile." << std::endl;
-    return std::vector<IShape*>();
+    std::cout << "Getting m_shapes from loaded shapefile." << std::endl;
+    return m_shapes;
 }

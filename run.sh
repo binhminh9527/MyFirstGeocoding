@@ -1,3 +1,7 @@
 cd "$(dirname "$0")"
-make clean; make;
+make;
+cd Input
+python Generate_Point.py
+python Generate_Polygons.py
+cd ..
 ./MyFirstGeocoding

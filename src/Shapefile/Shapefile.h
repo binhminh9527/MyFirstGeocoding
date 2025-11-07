@@ -30,8 +30,10 @@ private:
     ShapeType GetShapeTypefromFile();
     uint32_t GetFileLength();
     void CreateAllShapes();
-    std::ifstream m_shp; 
-    std::vector<IShape*> shapes;
+    std::vector<IShape*> m_shapes;
+    std::ifstream m_shp;
+    std::ifstream m_shx;
+    std::ifstream m_dbf; 
 };
 
 #endif // SHAPEFILE_H
