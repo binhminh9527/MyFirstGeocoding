@@ -1,2 +1,3 @@
 cd "$(dirname "$0")"
-./MyFirstGeocoding 
+make clean; make;
+./MyFirstGeocoding
