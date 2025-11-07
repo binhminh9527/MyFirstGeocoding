@@ -31,4 +31,4 @@ w.record("Square2")
 # Save shapefile (creates .shp, .shx, .dbf)
 w.close()
 
-print("✅ Created test_polygons.shp (2 polygons)")
+print("Created test_polygons.shp (2 polygons)")

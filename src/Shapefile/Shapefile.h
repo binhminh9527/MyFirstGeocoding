@@ -11,7 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
+#include <bit>
 #include "IShape.h"
 #include "PointShape.h"
 #include "PolygonShape.h"
@@ -21,13 +21,15 @@ public:
     Shapefile(const std::string& filename);
     ~Shapefile();
 
-    std::vector<IShape*> getShapes() ;
+    std::vector<IShape*> GetAllShapes() ;
 
 
 private:
-    int shapeType = 0;
-    void loadShapefile(const std::string& filename);
-    ShapeType getShapeType();
+    ShapeType m_shapeType = ShapeType::NULL_SHAPE;
+    void LoadShapefiles(const std::string& filename);
+    ShapeType GetShapeTypefromFile();
+    uint32_t GetFileLength();
+    void CreateAllShapes();
     std::ifstream m_shp; 
     std::vector<IShape*> shapes;
 };

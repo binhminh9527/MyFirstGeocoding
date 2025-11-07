@@ -1,0 +1,29 @@
+{
+    // Use the C/C++ extension's debugger (cpptools) to launch the built binary.
+    // This configuration will run the `MyFirstGeocoding` executable and attach gdb.
+    // It uses the `build debug` task (below) to compile with DEBUG=1 before launching.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug MyFirstGeocoding (gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/MyFirstGeocoding",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "build debug",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

@@ -9,7 +9,7 @@ The project is organized into several directories and files:
     - `IShape.h`: Defines the `IShape` interface with methods like `getArea()`, `getPerimeter()`, and `draw()`.
     - `IShape.cpp`: Implementation file for any common functionality related to the `IShape` interface.
   - **Shapefile/**: Handles the reading and processing of shapefiles.
-    - `Shapefile.h`: Defines the `Shapefile` class with methods like `loadShapefile()`, `getShapes()`, and `saveOutput()`.
+    - `Shapefile.h`: Defines the `Shapefile` class with methods like `LoadShapefiles()`, `getShapes()`, and `saveOutput()`.
     - `Shapefile.cpp`: Contains the implementation of the `Shapefile` class methods.
   - **Test/**: Contains the main entry point for the application.
     - `main.cpp`: The main function that creates instances of the `Shapefile` class and interacts with the `IShape` interface.

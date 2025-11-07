@@ -11,8 +11,8 @@ OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # Derive -I include flags from source subdirectories and the public include dir
 SRC_SUBDIRS := $(sort $(dir $(SOURCES)))
-INC_DIRS := $(patsubst %,-I%,$(SRC_SUBDIRS))
-CFLAGS := -Iinclude $(INC_DIRS) -DLOG_ENABLE -g -Wall -Wextra -std=c++17 
+INC_DIRS := $(patsubst %,-I%,$(SRC_SUBDIRS)) -I$(shell pwd)/src/Logging/
+CFLAGS := -Iinclude $(INC_DIRS) -DLOG_ENABLE -g -Wall -Wextra -std=c++23 
 
 all: $(BUILD_DIR) $(BIN)
 

@@ -3,11 +3,12 @@
 
 #include "Shapefile.h"
 
-const std::string shapefile_path = "./Input/test_polygons.shp";
+const std::string test_polygon = "./Input/test_polygons";
+const std::string test_points = "./Input/test_points";
 
 int main() {
     
-    Shapefile shapefile(shapefile_path);
+    Shapefile shapefile(test_points);
 
     return 0;
 }
