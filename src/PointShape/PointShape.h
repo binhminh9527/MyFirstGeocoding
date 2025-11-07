@@ -6,7 +6,7 @@
 class PointShape : public IShape {
 private:
     double x, y;
-
+    const ShapeType shapeType = ShapeType::POINT;
 public:
     PointShape(double x, double y);
     void draw() override;
